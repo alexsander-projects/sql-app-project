@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sqlapp", "sqlapp.csproj", "{43343E4B-90A4-47D6-ACAC-E9DA22F3746D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{43343E4B-90A4-47D6-ACAC-E9DA22F3746D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43343E4B-90A4-47D6-ACAC-E9DA22F3746D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43343E4B-90A4-47D6-ACAC-E9DA22F3746D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43343E4B-90A4-47D6-ACAC-E9DA22F3746D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
