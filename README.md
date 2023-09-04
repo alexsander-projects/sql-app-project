@@ -16,7 +16,7 @@ The app will be build with Jenkins, which will be used as CI for an Azure DevOps
 
 - Don't forget to change `terraform.tfvars` to set vm admin username, storage account key etc;
 
-- The Virtual machines password will NOT be on the output, instead they can be securely found in the `terraform.tfstate` file.
+- The Virtual machines password will NOT be on the output, instead they can be securely found in the `terraform.tfstate` file; the sql server password will also be there.
 
 ## Before we start
 
