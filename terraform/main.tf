@@ -18,6 +18,9 @@ provider "azurerm" {
 provider "random" {
 }
 
+#data for key vault
+data "azurerm_client_config" "current" {}
+
 #Resource Group
 resource "azurerm_resource_group" "sql-rg" {
   name     = var.resource_group.name
@@ -272,12 +275,26 @@ resource "azurerm_redis_cache" "sql-redis" {
   }
 }
 
+#rule for redis cache
 resource "azurerm_redis_firewall_rule" "sql-redis-firewall" {
   name                = "sqlredisfirewall"
   redis_cache_name    = azurerm_redis_cache.sql-redis.name
   resource_group_name = azurerm_resource_group.sql-rg.name
   start_ip            = "0.0.0.0"
   end_ip              = "0.0.0.0"
+}
+
+#azure key vault
+resource "azurerm_key_vault" "example" {
+  name                        = "sqlKeyVault"
+  location                    = azurerm_resource_group.sql-rg.location
+  resource_group_name         = azurerm_resource_group.sql-rg.name
+  enabled_for_disk_encryption = true
+  tenant_id                   = data.azurerm_client_config.current.tenant_id
+  soft_delete_retention_days  = 7
+  purge_protection_enabled    = false
+
+  sku_name = "standard"
 }
 
 #Random string

@@ -22,6 +22,12 @@ The app will be build with Jenkins, which will be used as CI for an Azure DevOps
 
 ![](https://github.com/nokorinotsubasa/sqlapp-project/blob/0757e355b58ec77612a7a17a9b13901115b95f42/images/sqlservernetworkingconfiguration.png)
 
+## Notes about terraform
+
+- Don't forget to change `terraform.tfvars` to set vm admin username, storage account key etc;
+
+- The Virtual machines password will NOT be on the output, instead they can be securely found in the `terraform.tfstate` file.
+
 ## Code configuration
 
 - Create a `Key Vault` and generate a secret, reference it on the code:
