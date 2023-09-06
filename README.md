@@ -64,23 +64,25 @@ The app will be build with Jenkins, which will be used as CI for an Azure DevOps
 
 ![](https://github.com/nokorinotsubasa/sqlapp-project/blob/8bafa6628e01c232b53da50478748c2a7eaf5004/images/unlockJenkins.png)
 
->you can get the initial password with: `sudo docker logs jenkins`
+you can get the initial password with:
+
+    sudo docker logs jenkins
 
 - Set up `GitHub connection` on Jenkins for code checkout, to do this:
 
 In the Vm, generate ssh keys:
 
->`ssh-keygen -t rsa`
+    ssh-keygen -t rsa
 
-The `public` key goes into the `github settings`; the `private key` into the `jenkins credentials settings`;
+>The `public` key goes into the `github settings`; the `private key` into the `jenkins credentials settings`;
 
 you need to add it into the `known_hosts_file`, to do this:
 
->`ssh-keyscan github.com >> ~/.ssh/known_hosts`
+    ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 Don't forget to start the ssh agent:
 
->`eval ssh-agent`
+    eval ssh-agent
 
 ![](https://github.com/nokorinotsubasa/sqlapp-project/blob/3f473716a1d020cc1638ed70c9aaf7e434f28deb/images/githubsshkeyconfiguration.png)
 
