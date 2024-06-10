@@ -102,7 +102,6 @@ variable "security_rule" {
   type = object({
     name                       = string
     priority                   = string
-    priority                   = string
     direction                  = string
     access                     = string
     protocol                   = string

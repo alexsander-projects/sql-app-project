@@ -114,8 +114,8 @@ source_image_reference = {
 
 #vms secrets
 vm_secrets = {
-  admin_username = ""
-  admin_password = ""
+  admin_username = "user963"
+  admin_password = "jeannedarc168.456"
 }
 
 #vms extension
@@ -128,16 +128,16 @@ vm_extension = {
     {
           "commandToExecute": "sh script2.sh",
           "storageAccountName": "terraformbackend5167",
-          "storageAccountKey": "<storageAccountKey>",
-          "fileUris": ["<fileUris>"]
+          "storageAccountKey": "5/pX7FiHkJeor7WCrAewhIwqouujyJVnbkJ4F6gURpunHBQ9ssVLnUJiPNcPVa8k3od55tlYouSH+AStoYBO3Q==",
+          "fileUris": ["https://terraformbackend5167.blob.core.windows.net/scriptextension/script2.sh"]
     }
  PROTECTED_SETTINGS
   protected_settings   = <<PROTECTED_SETTINGS
     {
           "commandToExecute": "sh script2.sh",
           "storageAccountName": "terraformbackend5167",
-          "storageAccountKey": "<storageAccountKey>",
-          "fileUris": ["<fileUris>"]
+          "storageAccountKey": "5/pX7FiHkJeor7WCrAewhIwqouujyJVnbkJ4F6gURpunHBQ9ssVLnUJiPNcPVa8k3od55tlYouSH+AStoYBO3Q==",
+          "fileUris": ["https://terraformbackend5167.blob.core.windows.net/scriptextension/script2.sh"]
     }
  PROTECTED_SETTINGS
 
