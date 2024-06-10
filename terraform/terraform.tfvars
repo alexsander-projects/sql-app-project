@@ -114,8 +114,8 @@ source_image_reference = {
 
 #vms secrets
 vm_secrets = {
-  admin_username = "user963"
-  admin_password = "jeannedarc168.456"
+  admin_username = "azureuser"
+  admin_password = "Password1234!"
 }
 
 #vms extension
@@ -129,7 +129,7 @@ vm_extension = {
           "commandToExecute": "sh script2.sh",
           "storageAccountName": "<storageAccountName>",
           "storageAccountKey": "<storageAccountKey>",
-          "fileUris": ["https://terraformbackend5167.blob.core.windows.net/scriptextension/script2.sh"]
+          "fileUris": ["<fileUris>"]
     }
  PROTECTED_SETTINGS
   protected_settings   = <<PROTECTED_SETTINGS
