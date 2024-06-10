@@ -128,7 +128,7 @@ vm_extension = {
     {
           "commandToExecute": "sh script2.sh",
           "storageAccountName": "<storageAccountName>",
-          "storageAccountKey": "",
+          "storageAccountKey": "<storageAccountKey>",
           "fileUris": ["<fileUris>"]
     }
  PROTECTED_SETTINGS
@@ -136,7 +136,7 @@ vm_extension = {
     {
           "commandToExecute": "sh script2.sh",
           "storageAccountName": "<storageAccountName>",
-          "storageAccountKey": "",
+          "storageAccountKey": "<storageAccountKey>",
           "fileUris": ["<fileUris>"]
     }
  PROTECTED_SETTINGS
