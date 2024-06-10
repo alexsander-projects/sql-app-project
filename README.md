@@ -2,7 +2,7 @@
 
 Here, an app will interact with tables with an MsSql database, and query it to show a web page with the table.
 
-![](images/architecture.png)
+![](images/Architecture.png)
 
 >`Architecture`
 
