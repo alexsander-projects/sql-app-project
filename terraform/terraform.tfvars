@@ -114,8 +114,8 @@ source_image_reference = {
 
 #vms secrets
 vm_secrets = {
-  admin_username = "azureuser"
-  admin_password = "Password1234!"
+  admin_username = "<admin_username>"
+  admin_password = "<admin_password>"
 }
 
 #vms extension
