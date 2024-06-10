@@ -18,9 +18,6 @@ provider "azurerm" {
 provider "random" {
 }
 
-#data for key vault
-data "azurerm_client_config" "current" {}
-
 #Resource Group
 resource "azurerm_resource_group" "sql-rg" {
   name     = var.resource_group.name
@@ -258,45 +255,6 @@ resource "azurerm_virtual_machine_extension" "agentVm" {
   depends_on         = [azurerm_linux_virtual_machine.agentVm2]
 }
 
-#Redis cache
-resource "azurerm_redis_cache" "sql-redis" {
-  name                = "rediscache${random_string.rediscache.result}"
-  location            = azurerm_resource_group.sql-rg.location
-  resource_group_name = azurerm_resource_group.sql-rg.name
-  capacity            = 1
-  family              = "C"
-  sku_name            = "Standard"
-  enable_non_ssl_port = false
-
-  redis_configuration {
-    maxmemory_reserved = 2
-    maxmemory_delta    = 2
-    maxmemory_policy   = "allkeys-lru"
-  }
-}
-
-#rule for redis cache
-resource "azurerm_redis_firewall_rule" "sql-redis-firewall" {
-  name                = "sqlredisfirewall"
-  redis_cache_name    = azurerm_redis_cache.sql-redis.name
-  resource_group_name = azurerm_resource_group.sql-rg.name
-  start_ip            = "0.0.0.0"
-  end_ip              = "0.0.0.0"
-}
-
-#azure key vault
-resource "azurerm_key_vault" "example" {
-  name                        = "sqlKeyVault"
-  location                    = azurerm_resource_group.sql-rg.location
-  resource_group_name         = azurerm_resource_group.sql-rg.name
-  enabled_for_disk_encryption = true
-  tenant_id                   = data.azurerm_client_config.current.tenant_id
-  soft_delete_retention_days  = 7
-  purge_protection_enabled    = false
-
-  sku_name = "standard"
-}
-
 #Random string
 resource "random_string" "masterVm" {
   length  = 4
@@ -315,18 +273,9 @@ resource "random_string" "agentVm" {
   special = false
 }
 
-#Random string
-resource "random_string" "rediscache" {
-  length  = 6
-  numeric = true
-  upper   = false
-  lower   = false
-  special = false
-}
-
 #Random password for master vm
 resource "random_password" "masterVm-password" {
-  length  = 12
+  length  = 18
   special = false
   numeric = true
   upper   = true
@@ -335,7 +284,7 @@ resource "random_password" "masterVm-password" {
 
 #Random password for agent vm
 resource "random_password" "agentVm-password" {
-  length  = 12
+  length  = 18
   special = false
   numeric = true
   upper   = true

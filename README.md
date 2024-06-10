@@ -10,11 +10,11 @@ The app is an ASP.Net running in C#
 
 All the resources will be deployed with Terraform.
 
-The app will be build with Jenkins, which will be used as CI for an Azure DevOps environment.
+The app will be built with Jenkins, which will be used as CI for an Azure DevOps environment.
 
 ## Notes about terraform
 
-- Don't forget to change `terraform.tfvars` to set vm admin username, storage account key etc;
+- Don't forget to change `terraform.tfvars` to set vm admin username, storage account key etc.;ｚ
 
 - The Virtual machines password will NOT be on the output, instead they can be securely found in the `terraform.tfstate` file; the sql server password will also be there.
 

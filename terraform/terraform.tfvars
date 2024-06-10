@@ -2,8 +2,8 @@
 
 #resource group
 resource_group = {
-  location = "japan east"
-  name     = "sql-rg"
+  location = "Brazil South"
+  name     = "resourcegroup108"
 }
 
 #sql-storage-account
@@ -114,8 +114,8 @@ source_image_reference = {
 
 #vms secrets
 vm_secrets = {
-  admin_username = "<admin_username>"
-  admin_password = "<admin_password>"
+  admin_username = "user963"
+  admin_password = ""
 }
 
 #vms extension
@@ -127,17 +127,17 @@ vm_extension = {
   protected_settings2  = <<PROTECTED_SETTINGS
     {
           "commandToExecute": "sh script2.sh",
-          "storageAccountName": "<storageAccountName>",
-          "storageAccountKey": "<storageAccountKey>",
-          "fileUris": ["<fileUris>"]
+          "storageAccountName": "terraformbackend5167",
+          "storageAccountKey": "5/pX7FiHkJeor7WCrAewhIwqouujyJVnbkJ4F6gURpunHBQ9ssVLnUJiPNcPVa8k3od55tlYouSH+AStoYBO3Q==",
+          "fileUris": ["https://terraformbackend5167.blob.core.windows.net/scriptextension/script2.sh"]
     }
  PROTECTED_SETTINGS
   protected_settings   = <<PROTECTED_SETTINGS
     {
-          "commandToExecute": "sh script2.sh",
-          "storageAccountName": "<storageAccountName>",
-          "storageAccountKey": "<storageAccountKey>",
-          "fileUris": ["<fileUris>"]
+          "commandToExecute": "sh script.sh",
+          "storageAccountName": "terraformbackend5167",
+          "storageAccountKey": "5/pX7FiHkJeor7WCrAewhIwqouujyJVnbkJ4F6gURpunHBQ9ssVLnUJiPNcPVa8k3od55tlYouSH+AStoYBO3Q==",
+          "fileUris": ["https://terraformbackend5167.blob.core.windows.net/scriptextension/script2.sh"]
     }
  PROTECTED_SETTINGS
 
