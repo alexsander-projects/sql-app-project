@@ -11,8 +11,8 @@ pipeline {
         steps{
           //restore, publish and zip package
           sh '''
-              dotnet restore /home/ubuntu/workspace/jenkinsjob/sqlapp --packages .nuget/ --runtime win-x64
-              dotnet publish /home/ubuntu/workspace/jenkinsjob/sqlapp --no-restore --runtime win-x64 --no-self-contained -o ./tmp/publish
+              dotnet restore /home/ubuntu/workspace/job12/sqlapp --packages .nuget/ --runtime win-x64
+              dotnet publish /home/ubuntu/workspace/job12/sqlapp --no-restore --runtime win-x64 --no-self-contained -o ./tmp/publish
               cd tmp/publish
               zip -r publish.zip .
               '''
