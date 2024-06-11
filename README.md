@@ -26,6 +26,9 @@ The app will be built with Jenkins, which will be used as CI for an Azure DevOps
 
 - The Jenkins job will be configured to build the app, and to deploy it into an Azure App Service.
 
+- Be careful when setting the `Jenkins Job Name` on the Azure DevOps pipeline, it must be the exact name of the Jenkins job, also
+- the paths in the jenkinsfile must be correctly set, or else the build will fail.
+
 ## Before we start
 
 - To see how to integrate Jenkins and Azure for Continuous Integration, [click here](https://github.com/nokorinotsubasa/CI-jenkins-azure)
