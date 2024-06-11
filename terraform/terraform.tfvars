@@ -137,7 +137,7 @@ vm_extension = {
           "commandToExecute": "sh script.sh",
           "storageAccountName": "terraformbackend5167",
           "storageAccountKey": "5/pX7FiHkJeor7WCrAewhIwqouujyJVnbkJ4F6gURpunHBQ9ssVLnUJiPNcPVa8k3od55tlYouSH+AStoYBO3Q==",
-          "fileUris": ["https://terraformbackend5167.blob.core.windows.net/scriptextension/script2.sh"]
+          "fileUris": ["https://terraformbackend5167.blob.core.windows.net/scriptextension/script.sh"]
     }
  PROTECTED_SETTINGS
 

@@ -12,11 +12,19 @@ All the resources will be deployed with Terraform.
 
 The app will be built with Jenkins, which will be used as CI for an Azure DevOps environment.
 
-## Notes about terraform
+## Notes:
 
 - Don't forget to change `terraform.tfvars` to set vm admin username, storage account key etc.;ｚ
 
 - The Virtual machines password will NOT be on the output, instead they can be securely found in the `terraform.tfstate` file; the sql server password will also be there.
+
+- The vm's will have a script extension to install docker and to configure the Jenkins agent.
+
+- These scripts will be on the `vmscriptextension` folder, the `script.sh` is for the master vm containing Jenkins, and the `script2.sh` is for the agent vm.
+
+- The Jenkins agent will be configured to run docker containers as agents.
+
+- The Jenkins job will be configured to build the app, and to deploy it into an Azure App Service.
 
 ## Before we start
 
