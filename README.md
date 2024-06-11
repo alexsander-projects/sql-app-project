@@ -42,29 +42,7 @@ The app will be built with Jenkins, which will be used as CI for an Azure DevOps
 
 ## Code configuration
 
-- Create a `Key Vault` and generate a secret, reference it on the code:
-
-![](images/keyvaultreference.png)
-
-- Head into App Service and click on `Identity`;
-
-- Enable `System Assigned Managed Identity`
-
-![](images/enablesystemassigned.png)
-
-- Go into the key vault and head into `Access Policies` and add an access policy;
-
-- Select the `Service Principal and save`:
-
-![](images/accesspolicyconfiguration.png)
-
-- Add the redis connection string on `Program.cs` by referencing the keyvault:
-
-![](images/rediscodesecured.png)
-
->`Redis configuration on code`
-
-### I will remove redis due to problems with terraform AzureRm
+- Change the `appsettings.json` file to set the connection string to the database;
 
 
 ## Jenkins Configuration
