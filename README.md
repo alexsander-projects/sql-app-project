@@ -112,16 +112,30 @@ Don't forget to start the ssh agent:
 
 ![](images/jenkinspipelinejobcreation.png)
 
+## Note:
+
+- Strict checking will be disabled to facilitate the connection between the Jenkins and the GitHub repository, to do this:
+Head into Jenkins Security settings, and disable `Host Key Verification Strategy`;
+
+![](images/Hostkeyverificationstrategy.png)
+
 - Now, follow [this link](https://github.com/nokorinotsubasa/CI-jenkins-azure) to integrate Jenkins into Azure;
 
 ## Database configuration
 
 - Access the database and run the `script.sql` (it can be found on this repository)
+
+`You will need to add your client IP to the firewall rules to access the database`
+
 - This script will create a table and insert some data into it;
 
 ![](images/sqlquery.png)
 
 >`script.sql query`
+
+## Docker-Agent configuration
+
+- To see how to configure docker containers as Jenkins agents, [click here](https://github.com/alexsander-projects/jenkins-docker-agent)
 
 ## Azure DevOps configuration
 
