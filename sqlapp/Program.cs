@@ -1,5 +1,3 @@
-using Azure.Identity;
-using Azure.Security.KeyVault.Secrets;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,17 +5,11 @@ using sqlapp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var keyVaultUri = new Uri("YOUR_KEY_VAULT_URI");
-var client = new SecretClient(keyVaultUri, new DefaultAzureCredential());
-
-KeyVaultSecret secret = client.GetSecret("SecretNameForConnectionString");
-string connectionString = secret.Value;
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddRazorPages();
 
-var multiplexer = ConnectionMultiplexer.Connect(connectionString);
-builder.Services.AddSingleton<IConnectionMultiplexer>(multiplexer);
-builder.Services.AddTransient<IProductService, ProductService>();
+builder.Services.AddTransient<IProductService>(_ => new ProductService(connectionString));
 
 var app = builder.Build();
 
