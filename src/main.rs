@@ -15,7 +15,7 @@ struct Products {
 }
 
 #[get("/")]
-async fn get_products() -> Json<Vec<Products>> {
+async fn get_products() -> String {
     let connection_string = env::var("CONNECTION_STRING").expect("CONNECTION_STRING must be set");
 
     let config = Config::from_ado_string(&connection_string).unwrap();
@@ -44,8 +44,13 @@ async fn get_products() -> Json<Vec<Products>> {
         });
     }
 
-    Json(products)
-}
+    let mut html = String::new();
+        for product in products {
+            html.push_str(&format!("<p>{}: {}</p>", product.ProductName, product.Quantity));
+        }
+
+        html
+    }
 
 #[catch(404)]
 fn not_found() -> &'static str {
