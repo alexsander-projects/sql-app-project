@@ -368,3 +368,5 @@ FodyWeavers.xsd
 terraform.tfstate
 terraform.tfstate.backup
 terraform.tfstate.backup
+# Project exclude paths
+/target/
