@@ -7,7 +7,7 @@ use std::env;
 
 static CONN_STR_PORT: Lazy<String> = Lazy::new(|| {
     env::var("TIBERIUS_TEST_CONNECTION_STRING").unwrap_or_else(|_| {
-        "Server=tcp:sqlserver486152684512385.database.windows.net,1433;Initial Catalog=sqldatabase175963;Persist Security Info=False;User ID=4dm1n157r470r;Password=8uZv849W8J1m;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;".to_owned()
+        "<CONNECTION_STRING>".to_owned()
     })
 });
 
