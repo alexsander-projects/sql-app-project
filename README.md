@@ -1,4 +1,4 @@
-# SQL App Project README
+# SQL App Project
 
 ## Table of Contents
 
