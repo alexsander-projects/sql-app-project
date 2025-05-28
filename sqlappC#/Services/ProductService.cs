@@ -1,48 +1,46 @@
 ﻿using sqlapp.Models;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient; // Changed from System.Data.SqlClient
 
 namespace sqlapp.Services
 {
     public class ProductService : IProductService
     {
-        private string _connectionString;
+        private readonly string _connectionString;
 
         public ProductService(string connectionString)
         {
             _connectionString = connectionString;
         }
 
-        private SqlConnection GetConnection()
-        {
-            return new SqlConnection(_connectionString);
-        }
-
         public async Task<List<Product>> GetProducts()
         {
             List<Product> _product_lst = new List<Product>();
-
             string _statement = "SELECT ProductId,ProductName,Quantity from Products";
-            SqlConnection _connection = GetConnection();
 
-            _connection.Open();
-
-            SqlCommand _sqlCommand = new SqlCommand(_statement, _connection);
-
-            using (SqlDataReader _reader = await _sqlCommand.ExecuteReaderAsync())
+            // Using statement ensures the connection is disposed of properly
+            using (SqlConnection _connection = new SqlConnection(_connectionString))
             {
-                while (_reader.Read())
+                await _connection.OpenAsync(); // Use async open
+
+                SqlCommand _sqlCommand = new SqlCommand(_statement, _connection);
+
+                using (SqlDataReader _reader = await _sqlCommand.ExecuteReaderAsync()) // SqlDataReader is already in a using block, which is good
                 {
-                    Product _product = new Product()
+                    while (await _reader.ReadAsync()) // Use async read
                     {
-                        ProductID = _reader.GetInt32(0),
-                        ProductName = _reader.GetString(1),
-                        Quantity = _reader.GetInt32(2)
-                    };
-                    _product_lst.Add(_product);
+                        Product _product = new Product()
+                        {
+                            ProductID = _reader.GetInt32(0),
+                            ProductName = _reader.GetString(1),
+                            Quantity = _reader.GetInt32(2)
+                        };
+                        _product_lst.Add(_product);
+                    }
                 }
+                // No need to explicitly call _connection.Close() due to the using statement
             }
-            _connection.Close();
             return _product_lst;
         }
     }
 }
+

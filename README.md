@@ -1,174 +1,204 @@
-# Introduction
+# SQL App Project README
 
-Here, an app will interact with tables with an MsSql database, and query it to show a web page with the table.
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Architecture](#architecture)
+- [Important Notes](#important-notes)
+- [Prerequisites](#prerequisites)
+- [Application Configuration](#application-configuration)
+- [Jenkins Setup](#jenkins-setup)
+  - [Deploy Resources](#1-deploy-resources)
+  - [Jenkins Agent VM](#2-jenkins-agent-vm)
+  - [Initial Jenkins Configuration](#3-initial-jenkins-configuration)
+  - [GitHub Integration](#4-github-integration)
+  - [Docker Cloud Provider](#5-docker-cloud-provider-optional-but-recommended-for-dynamic-agents)
+  - [Create Jenkins Pipeline Job](#6-create-jenkins-pipeline-job)
+- [Security Considerations](#security-considerations)
+- [Database Setup](#database-setup)
+- [Docker Agent Configuration](#docker-agent-configuration)
+- [Azure DevOps Setup](#azure-devops-setup)
+  - [Service Connections](#1-service-connections)
+  - [Build Pipeline](#2-build-pipeline-yaml-or-classic)
+  - [Release Pipeline](#3-release-pipeline)
+  - [CI Trigger for Build Pipeline](#4-ci-trigger-for-build-pipeline)
+- [CI/CD Workflow](#cicd-workflow)
+- [Final Result](#final-result)
+- [Persisting Jenkins Data](#persisting-jenkins-data)
+
+## Introduction
+
+This project demonstrates an ASP.NET Core application that interacts with an MS SQL database. The application queries the database and displays the data on a web page.
+
+**This is completely focused on the backend. The frontend is just a sample, 
+but it works.**
+
+The project is designed to be deployed using Azure resources, 
+with a CI/CD pipeline managed by Jenkins and Azure DevOps.
+
+## Architecture
 
 ![](images/Architecture.png)
 
->`Architecture`
+> Figure 1: System Architecture
 
-The app is an ASP.Net running in C#
+The application is an ASP.NET C# web app. All Azure resources are provisioned using Terraform. Jenkins is used for Continuous Integration (CI) within an Azure DevOps environment.
 
-All the resources will be deployed with Terraform.
+## Important Notes
 
-The app will be built with Jenkins, which will be used as CI for an Azure DevOps environment.
+*   **Configuration:** Remember to update `terraform.tfvars` with your specific values for VM admin username, storage account key, etc. **Never commit sensitive data directly to your repository.** Use secure methods like Azure Key Vault or environment variables for managing secrets.
+*   **Secrets Management:** VM passwords and the SQL server password are not output by Terraform directly. They can be found in the `terraform.tfstate` file. **Handle the `.tfstate` file with extreme care as it contains sensitive information.** Consider using [Terraform remote state](https://www.terraform.io/language/state/remote) with appropriate access controls.
+*   **VM Setup:** Virtual machines utilize script extensions (`vmscriptextension` folder) to install Docker and configure the Jenkins agent. `script.sh` is for the Jenkins master VM, and `script2.sh` is for the agent VM.
+*   **Jenkins Agent:** The Jenkins agent is configured to use Docker containers.
+*   **Jenkins Job:** The Jenkins job builds the application and deploys it to an Azure App Service.
+*   **Path Accuracy:** Ensure the `Jenkins Job Name` in the Azure DevOps pipeline and paths within the `Jenkinsfile` are correct to prevent build failures.
 
-## Notes:
+## Prerequisites
 
-- Don't forget to change `terraform.tfvars` to set vm admin username, storage account key etc.;ｚ
+*   **Jenkins & Azure CI:** For integrating Jenkins and Azure for CI, refer to [CI Jenkins Azure Guide](https://github.com/nokorinotsubasa/CI-jenkins-azure).
+*   **Jenkins Docker Agents:** To use Docker containers as Jenkins agents, see [Jenkins Docker Agent Guide](https://github.com/nokorinotsubasa/jenkins-docker-agent).
+*   **SQL Server Configuration:**
+    *   Allow connections in the SQL server's Networking configuration.
+    *   Enable "Allow Azure services and resources to access this server."
+    ![](images/sqlservernetworkingconfiguration.png)
+    > Figure 2: SQL Server Networking Configuration
 
-- The Virtual machines password will NOT be on the output, instead they can be securely found in the `terraform.tfstate` file; the sql server password will also be there.
+## Application Configuration
 
-- The vm's will have a script extension to install docker and to configure the Jenkins agent.
+*   Update the `ConnectionStrings` section in the `appsettings.json` file with the connection string to your database. **Avoid hardcoding connection strings in source control.** Use environment variables or Azure App Configuration for production environments.
 
-- These scripts will be on the `vmscriptextension` folder, the `script.sh` is for the master vm containing Jenkins, and the `script2.sh` is for the agent vm.
+## Jenkins Setup
 
-- The Jenkins agent will be configured to run docker containers as agents.
+### 1. Deploy Resources
 
-- The Jenkins job will be configured to build the app, and to deploy it into an Azure App Service.
+Run `terraform apply` to deploy the Azure resources. VM script extensions will run upon creation.
 
-- Be careful when setting the `Jenkins Job Name` on the Azure DevOps pipeline, it must be the exact name of the Jenkins job, also
-- the paths in the jenkinsfile must be correctly set, or else the build will fail.
+### 2. Jenkins Agent VM
 
-## Before we start
+The agent VM will be pre-configured for Docker containers via script extensions.
 
-- To see how to integrate Jenkins and Azure for Continuous Integration, [click here](https://github.com/nokorinotsubasa/CI-jenkins-azure)
+### 3. Initial Jenkins Configuration
 
-- To see how to use docker containers as Jenkins agents, [click here](https://github.com/nokorinotsubasa/jenkins-docker-agent)
-
-- Remember to allow connections on the sql server Networking configuration, also, enable `Allow Azure services and resources to access this server`:
-
-![](images/sqlservernetworkingconfiguration.png)
-
-
-## Code configuration
-
-- Change the `appsettings.json` file to set the connection string to the database;
-
-
-## Jenkins Configuration
-
-- First, let's run `terraform` to deploy all the resources we need; the Virtual machines will run script extensions upon creation, to speed up the process;
-
-- The Jenkins agent Vm will `already be configured` to spin docker containers, thanks to the script extension implementation;
-
-- Proceed with jenkins configuration, create an admin user, download `Docker`, `github` and `azure cli` plugins; Access
-- it with the `Vm IP:8080` and unlock it with the initial password;
->`you will have to login into the vm to get the password, it will be on the logs of the jenkins container`
-
-![](images/unlockJenkins.png)
-
-you can get the initial password with:
-
+*   Access Jenkins via `http://<VM_IP>:8080`.
+*   Unlock Jenkins using the initial admin password. This can be found in the Jenkins container logs on the master VM:
+    ```bash
     sudo docker logs jenkins
+    ```
+    ![](images/unlockJenkins.png)
+    > Figure 3: Unlock Jenkins
+*   Create an admin user.
+*   Install necessary plugins: `Docker`, `GitHub`, and `Azure CLI` (or `Azure Credentials` and related plugins for Azure integration).
 
-- Set up `GitHub connection` on Jenkins for code checkout, to do this:
+### 4. GitHub Integration
 
-In the Vm, generate ssh keys:
-
+*   On the Jenkins master VM, generate an SSH key pair:
+    ```bash
     ssh-keygen -t rsa
-
->The `public` key goes into the `github settings`; the `private key` into the `jenkins credentials settings`;
-
-you need to add it into the `known_hosts_file`, to do this:
-
+    ```
+*   Add the **public key** to your GitHub repository's Deploy Keys (or your user's SSH keys).
+*   Add the **private key** to Jenkins credentials (Kind: SSH Username with private key).
+    ![](images/githubsshkeyconfiguration.png)
+    > Figure 4: GitHub SSH Key Configuration
+    ![](images/sshgithubcredentials.png)
+    > Figure 5: Jenkins GitHub Credential Configuration
+*   Add GitHub to the known hosts on the Jenkins master VM:
+    ```bash
     ssh-keyscan github.com >> ~/.ssh/known_hosts
+    ```
+*   Ensure the SSH agent is running:
+    ```bash
+    eval $(ssh-agent -s)
+    ssh-add ~/.ssh/id_rsa # Or the path to your private key
+    ```
 
-Don't forget to start the ssh agent:
+### 5. Docker Cloud Provider (Optional but Recommended for Dynamic Agents)
 
-    eval ssh-agent
+*   Configure Docker as a cloud provider in Jenkins (Manage Jenkins -> Clouds).
+*   Set the Docker Host URI to connect to the agent VM's Docker daemon (e.g., `tcp://<AGENT_VM_IP>:4243` - ensure port 4243 is open and Docker is configured to listen on it, as in `script2.sh`).
+    ![](images/jenkinscloudconfiguration.png)
+    > Figure 6: Jenkins Cloud Configuration
 
-![](images/githubsshkeyconfiguration.png)
+### 6. Create Jenkins Pipeline Job
 
->`GitHub ssh key configuration`
+*   Create a new Pipeline job.
+*   Select "Pipeline script from SCM."
+*   Choose Git as SCM.
+*   Provide the repository URL (SSH URL, e.g., `git@github.com:USERNAME/REPONAME.git`).
+*   Select the appropriate GitHub SSH credentials.
+    ![](images/jenkinspipelinejobcreation.png)
+    > Figure 7: Jenkins Pipeline Job Creation
 
-![](images/sshgithubcredentials.png)
+## Security Considerations
 
->`Jenkins GitHub credential configuration`
+*   **Host Key Verification:** **Disabling is not recommended for security reasons.** Instead, ensure the host key for GitHub is correctly added to `known_hosts`. If issues persist, investigate them rather than disabling this security feature.
+    ![](images/Hostkeyverificationstrategy.png)
+    > Figure 8: Host Key Verification (If disabled - not recommended)
+*   Follow the [CI Jenkins Azure Guide](https://github.com/nokorinotsubasa/CI-jenkins-azure) for secure Jenkins and Azure integration.
 
-- Set up docker `cloud provider` on Jenkins, for the container agents. Remember to correctly set the agent Vm IP;
+## Database Setup
 
-![](images/jenkinscloudconfiguration.png)
+1.  **Access Database:** Connect to your SQL database. You may need to add your client IP address to the Azure SQL Server firewall rules.
+2.  **Run SQL Script:** Execute the `script.sql` (found in this repository) to create the necessary table and insert sample data.
+    ![](images/sqlquery.png)
+    > Figure 9: script.sql Query
 
-- Create a new Job on Jenkins of type pipeline, set the source code as: `Source code from scm` and set GitHub ssh credentials and connection.
+## Docker Agent Configuration
 
-![](images/jenkinspipelinejobcreation.png)
+*   For detailed guidance on configuring Docker containers as Jenkins agents, refer to [Jenkins Docker Agent Setup](https://github.com/alexsander-projects/jenkins-docker-agent).
 
-## Note:
+## Azure DevOps Setup
 
-- Strict checking will be disabled to facilitate the connection between the Jenkins and the GitHub repository, to do this:
-Head into Jenkins Security settings, and disable `Host Key Verification Strategy`;
+### 1. Service Connections
 
-![](images/Hostkeyverificationstrategy.png)
+Ensure you have Service Connections set up in Azure DevOps for Jenkins and GitHub.
 
-- Now, follow [this link](https://github.com/nokorinotsubasa/CI-jenkins-azure) to integrate Jenkins into Azure;
+### 2. Build Pipeline (YAML or Classic)
 
-## Database configuration
+*   Create a new pipeline.
+*   Use a template that integrates with Jenkins (e.g., the "Jenkins" template if available, or a YAML pipeline with a Jenkins job invocation task).
+*   Configure the Jenkins job invocation: **The `Job name` must exactly match the Jenkins job name.**
+    ![](images/pipelineconfiguration.png)
+    > Figure 10: Azure DevOps Pipeline Configuration (Jenkins Job)
 
-- Access the database and run the `script.sql` (it can be found on this repository)
+### 3. Release Pipeline
 
-`You will need to add your client IP to the firewall rules to access the database`
+*   Create a new Release Pipeline.
+*   Select a template for deploying to Azure App Service (e.g., "Azure App Service deployment").
+*   Configure the artifact source to be the build pipeline created in the previous step.
+    ![](images/releasepipelineartifact.png)
+    > Figure 11: Release Pipeline Artifact Configuration
+*   Enable the Continuous Delivery (CD) trigger.
+    ![](images/CDtrigger.png)
+    > Figure 12: Release Pipeline CD Trigger
 
-- This script will create a table and insert some data into it;
+### 4. CI Trigger for Build Pipeline
 
-![](images/sqlquery.png)
+*   Go back to your Build Pipeline settings.
+*   Enable the Continuous Integration (CI) trigger (e.g., trigger on commits to the main branch of your GitHub repository).
+    ![](images/pipelineCItrigger.png)
+    > Figure 13: Build Pipeline CI Trigger
 
->`script.sql query`
+## CI/CD Workflow
 
-## Docker-Agent configuration
+1.  A commit to the GitHub repository triggers the Azure DevOps Build Pipeline.
+2.  The Build Pipeline queues the Jenkins job.
+    ![](images/queuejenkinsjob.png)
+    > Figure 14: Azure DevOps Queuing Jenkins Job
+3.  Jenkins builds the application and publishes artifacts.
+4.  The Azure DevOps Build Pipeline downloads the artifacts.
+5.  The CD trigger on the Release Pipeline starts a new release.
+6.  The Release Pipeline downloads the build artifacts and deploys the application to the Azure App Service.
+    ![](images/releasePipelineLogs.png)
+    > Figure 15: Release Pipeline Logs
 
-- To see how to configure docker containers as Jenkins agents, [click here](https://github.com/alexsander-projects/jenkins-docker-agent)
+## Final Result
 
-## Azure DevOps configuration
-
-- Now on Azure DevOps, with Jenkins and GitHub service connection, create a new Pipeline, select `Pipeline template`;
-
-- Search and select `Jenkins`;
-
-- Correctly set the required fields, `REMEMBER THAT THE JOB NAME IS THE EXACTLY JOB NAME OF THE JENKINS JOB`;
-
-![](images/pipelineconfiguration.png)
-
->`Pipeline configuration`
-
-- Create a `Release Pipeline` on azure, and select the Azure web app job, insert the app service type, name and framework;
-
-- Configure the artifact source, in our case: `build`;
-
-![](images/releasepipelineartifact.png)
-
->`Release Pipeline Configuration`
-
-- Activate the `Continuous Delivery` trigger;
-
-![](images/CDtrigger.png)
-
->`Release Pipeline trigger`
-
-- Head back into `Pipelines` and set the `Continuous Integration` trigger (GitHub commit);
-
-![](images/pipelineCItrigger.png)
-
->`CI trigger`
-
-- Now, upon running the Pipeline, it will queue the Jenkins job, building the app and generating the `artifact`, this will be downloaded into the build pipeline on Azure DevOps, to be later used;
-
-![](images/queuejenkinsjob.png)
-
->`Azure, Jenkins job logs`
-
-- The Release Pipeline will start running, this will download the artifact from the build, and deploy the app into our `Azure App Service`.
-
-![](images/releasePipelineLogs.png)
-
->`Release Pipeline logs`
-
-## Final result
-
-- Now, when accessing the web page, you will get a list of products; On every approved commit, a pipeline will run, building and deploying a new version of the app, thanks to CI/CD integration.
+Accessing the web application's URL will display a list of products. Every approved commit to the repository will automatically trigger the CI/CD pipeline, building and deploying the new version of the application.
 
 ![](images/appwebpage.png)
->`app's web page`
+> Figure 16: Application Web Page
 
-## How to Persist Jenkins data
+## Persisting Jenkins Data
 
-- To know how to persist Jenkins data, [click here](https://github.com/nokorinotsubasa/tar-jenkins-docker)
+*   To learn how to persist Jenkins data (e.g., using Docker volumes or other backup strategies), refer to [Persist Jenkins Docker Data](https://github.com/nokorinotsubasa/tar-jenkins-docker).
+

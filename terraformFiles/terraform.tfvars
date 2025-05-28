@@ -115,7 +115,7 @@ source_image_reference = {
 #vms secrets
 vm_secrets = {
   admin_username = "user963"
-  admin_password = ""
+  admin_password = "" # Placeholder - Ensure this is securely managed, e.g., via Azure Key Vault or environment variables
 }
 
 #vms extension
@@ -127,17 +127,17 @@ vm_extension = {
   protected_settings2  = <<PROTECTED_SETTINGS
     {
           "commandToExecute": "sh script2.sh",
-          "storageAccountName": "<storage-account-name>
-          "storageAccountKey": "<storage-account-key>",
-          "fileUris": ["<script-uri>"]
+          "storageAccountName": "<storage-account-name>", // Placeholder - Replace with actual storage account name or use a variable
+          "storageAccountKey": "<storage-account-key>",   // Placeholder - Replace with actual storage account key or use a secure method like Key Vault
+          "fileUris": ["<script-uri>"] // Placeholder - Replace with actual script URI
     }
  PROTECTED_SETTINGS
   protected_settings   = <<PROTECTED_SETTINGS
     {
           "commandToExecute": "sh script.sh",
-          "storageAccountName": "<storage-account-name>
-          "storageAccountKey": "<storage-account-key>",
-          "fileUris": ["<script-uri>"]
+          "storageAccountName": "<storage-account-name>", // Placeholder - Replace with actual storage account name or use a variable
+          "storageAccountKey": "<storage-account-key>",   // Placeholder - Replace with actual storage account key or use a secure method like Key Vault
+          "fileUris": ["<script-uri>"] // Placeholder - Replace with actual script URI
     }
  PROTECTED_SETTINGS
 
